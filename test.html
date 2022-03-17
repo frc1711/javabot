@@ -1,0 +1,18 @@
+<html>
+	<title>Testing</title>
+	<h1>Testing</h1>
+	<script>
+		window.onload = function () {
+			let xml = new XMLHttpRequest();
+			xml.open("GET", "http://localhost:4445", true);
+			xml.onreadystatechange = function () {
+				if (this.readyState == 4) {
+					alert(this.responseURL);
+					alert(this.responseText);
+				}
+			}
+			xml.send("");
+		}
+	</script>
+	
+</html>
