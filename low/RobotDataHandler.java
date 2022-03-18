@@ -3,18 +3,16 @@ package low;
 import java.util.ArrayList;
 import java.util.List;
 
-import robotstate.GameState;
-
 public class RobotDataHandler {
 	
 	private static final String
 		ROBOT_DATA_UPDATE_INDICATOR = "ROBOT DATA UPDATE",
 		PAUSED_KEY = "PAUSED";
 	
-	private final GameState gameState;
+	private final Robot robot;
 	
-	public RobotDataHandler (GameState gameState) {
-		this.gameState = gameState;
+	public RobotDataHandler (Robot robot) {
+		this.robot = robot;
 	}
 	
 	public String responseFromRawData (List<String> linesList) {
@@ -32,7 +30,7 @@ public class RobotDataHandler {
 			dataLines.remove(0);
 			try {
 				processDataLines(dataLines);
-				return gameState.getDataString();
+				return robot.getDataString();
 			} catch (LookupException e) {
 				return "";
 			}
@@ -41,8 +39,11 @@ public class RobotDataHandler {
 	
 	private void processDataLines (List<String> dataLines) throws LookupException {
 		// Only update the game state if the updates aren't paused
-		if ((getValue(dataLines, PAUSED_KEY)).equals("false"))
-			gameState.update();
+		if ((getValue(dataLines, PAUSED_KEY)).equals("false")) {
+			synchronized (robot) {
+				robot.update();
+			}
+		}
 	}
 	
 	// In the "key:value&key:value&..." structure
