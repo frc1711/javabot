@@ -1,18 +1,49 @@
 <html>
-	<title>Testing</title>
-	<h1>Testing</h1>
+	<title>Javabot</title>
+	
+	<body></body>
+	
 	<script>
-		window.onload = function () {
-			let xml = new XMLHttpRequest();
-			xml.open("GET", "http://localhost:4445", true);
+		const width = window.innerWidth, height = window.innerHeight;
+		
+		const canvas = document.createElement("canvas")
+		canvas.setAttribute("position", "absolute")
+		canvas.setAttribute("left", "0px")
+		canvas.setAttribute("top", "0px")
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		document.body.appendChild(canvas)
+		
+		function clearBackground () {
+			ctx.fillStyle = "white";
+			ctx.fillRect(0, 0, width, height)
+		}
+		
+		function drawRect (x, y, w, h) {
+			ctx.fillStyle = "black"
+			ctx.fillRect(x, y, w, h)
+		}
+		
+		function updateView (response) {
+			let x = parseFloat(response.split(":")[0])
+			let y = parseFloat(response.split(":")[1])
+			
+			clearBackground()
+			drawRect(x, y, 50, 50)
+		}
+		
+		const ctx = canvas.getContext("2d")
+		
+		setInterval(function(){
+			let xml = new XMLHttpRequest()
+			xml.open("GET", "http://localhost:4445", true)
 			xml.onreadystatechange = function () {
 				if (this.readyState == 4) {
-					alert(this.responseURL);
-					alert(this.responseText);
+					updateView(this.responseText)
 				}
 			}
-			xml.send("");
-		}
+			xml.send("")
+		}, 100);
 	</script>
 	
 </html>

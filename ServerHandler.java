@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 
-public class ServersHandler {
+public class ServerHandler {
 	
 	private static final int MAIN_PORT = 4444;
 	private static final String MAIN_URL = "http://localhost:"+MAIN_PORT;
@@ -19,8 +19,13 @@ public class ServersHandler {
 	
 	private static final String LOCAL_HTML_MAIN_PAGE = "test.html";
 	
+	private final RobotDataHandler dataHandler;
 	private ServerSocket mainServerSocket, robotDataServerSocket;
 	private boolean closedServers = false;
+	
+	public ServerHandler (RobotDataHandler dataHandler) {
+		this.dataHandler = dataHandler;
+	}
 	
 	public void start () {
 		handleMainPage();
@@ -42,11 +47,12 @@ public class ServersHandler {
 		try {
 			while (true) {
 				Socket robotDataClientSocket = robotDataServerSocket.accept();
-				
-				// Calculate and send the data for the socket
 				PrintWriter robotDataOutput = new PrintWriter(robotDataClientSocket.getOutputStream(), true);
 				BufferedReader robotDataInput = new BufferedReader(new InputStreamReader(robotDataClientSocket.getInputStream()));
-				getRobotDataResponse(robotDataInput, robotDataOutput);
+				
+				// Calculate and send back data
+				writeHeader(robotDataOutput);
+				robotDataOutput.println(dataHandler.processData(robotDataInput.lines()));
 				
 				robotDataClientSocket.close();
 			}
