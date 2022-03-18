@@ -1,11 +1,16 @@
-import low.Robot;
+import java.io.PrintStream;
+
+import low.RobotState;
+import low.RobotState.GameException;
 
 public abstract class RobotBase {
 	
-	private final Robot robot;
+	public final PrintStream output;
+	private final RobotState robot;
 	
 	public RobotBase () {
-		robot = new Robot();
+		output = null; // TODO: Make the PrintStream usable
+		robot = new RobotState();
 	}
 	
 	public final void turnLeft () {
@@ -16,10 +21,22 @@ public abstract class RobotBase {
 		robot.turnRight();
 	}
 	
-	public final void startRobot () {
-		robot.startRobot(this::run);
+	public final void move () {
+		robot.move();
 	}
 	
-	public abstract void run ();
+	public final void startRobot () {
+		robot.startRobot(this::runWrapper);
+	}
+	
+	private final void runWrapper () {
+		try {
+			run();
+		} catch (GameException e) {
+			output.println(e);
+		}
+	}
+	
+	public abstract void run () throws GameException;
 	
 }

@@ -5,15 +5,15 @@ public class RobotExample extends RobotBase {
 	}
 	
 	@Override
-	public void run() {
+	public void run () {
 		System.out.println("Turning left");
 		turnLeft();
 		System.out.println("Turning right");
 		turnRight();
 		
 		for (int i = 1; i <= 10; i ++) {
-			System.out.println("turning #"+i);
-			turnLeft();
+			System.out.println("moving #"+i);
+			move();
 		}
 		
 		System.out.println("Done");

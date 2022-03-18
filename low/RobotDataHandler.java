@@ -9,9 +9,9 @@ public class RobotDataHandler {
 		ROBOT_DATA_UPDATE_INDICATOR = "ROBOT DATA UPDATE",
 		PAUSED_KEY = "PAUSED";
 	
-	private final Robot robot;
+	private final RobotState robot;
 	
-	public RobotDataHandler (Robot robot) {
+	public RobotDataHandler (RobotState robot) {
 		this.robot = robot;
 	}
 	

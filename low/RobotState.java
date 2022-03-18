@@ -1,6 +1,10 @@
 package low;
 
-public class Robot {
+public class RobotState {
+	
+	private static final int
+		FIELD_WIDTH = 10,
+		FIELD_HEIGHT = 10;
 	
 	private double x = 0, y = 0;
 	private int rotation = 0; // 0 = facing right, 1 = up, 2 = left, 3 = down
@@ -21,6 +25,31 @@ public class Robot {
 		waitForGameStateUpdate();
 		rotation --;
 		if (rotation == -1) rotation = 3;
+	}
+	
+	public final void move () throws GameException {
+		waitForGameStateUpdate();
+		switch (rotation) {
+			case 0:
+				x ++;
+				break;
+			case 1:
+				y ++;
+				break;
+			case 2:
+				x --;
+				break;
+			case 3:
+				y --;
+				break;
+		}
+		
+		checkWithinBounds();
+	}
+	
+	private void checkWithinBounds () throws GameException {
+		if (x < 0 || x >= FIELD_WIDTH) throw new GameException("Out of bounds");
+		if (y < 0 || y >= FIELD_HEIGHT) throw new GameException("Out of bounds");
 	}
 	
 	private void waitForGameStateUpdate () {
@@ -47,6 +76,12 @@ public class Robot {
 		obj.put("y", y);
 		obj.put("rotation", rotation);
 		return obj.getJSONString();
+	}
+	
+	public class GameException extends RuntimeException {
+		public GameException (String message) {
+			super(message);
+		}
 	}
 	
 }
