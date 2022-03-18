@@ -14,6 +14,8 @@
 		canvas.height = window.innerHeight;
 		document.body.appendChild(canvas)
 		
+		let gameState = {}
+		
 		function clearBackground () {
 			ctx.fillStyle = "white";
 			ctx.fillRect(0, 0, width, height)
@@ -25,24 +27,25 @@
 		}
 		
 		function updateView (response) {
-			let x = parseFloat(response.split(":")[0])
-			let y = parseFloat(response.split(":")[1])
-			
 			clearBackground()
-			drawRect(x, y, 50, 50)
+			console.log(gameState)
 		}
 		
 		const ctx = canvas.getContext("2d")
 		
+		const paused = false
+		
 		setInterval(function(){
-			let xml = new XMLHttpRequest()
-			xml.open("GET", "http://localhost:4445", true)
-			xml.onreadystatechange = function () {
+			let req = new XMLHttpRequest()
+			req.open("POST", "http://localhost:4445", true)
+			req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+			req.onreadystatechange = function () {
 				if (this.readyState == 4) {
-					updateView(this.responseText)
+					gameState = JSON.parse(this.responseText)
+					updateView()
 				}
 			}
-			xml.send("")
+			req.send(`ROBOT DATA UPDATE\nPAUSED:${paused}\n`)
 		}, 100);
 	</script>
 	

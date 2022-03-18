@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.util.ArrayList;
 
 public class ServerHandler {
 	
@@ -15,9 +16,9 @@ public class ServerHandler {
 	private static final String MAIN_URL = "http://localhost:"+MAIN_PORT;
 	
 	private static final int ROBOT_DATA_PORT = 4445;
-	private static final double ROBOT_DATA_TIMEOUT = 4;
+	private static final double ROBOT_DATA_TIMEOUT = 1;
 	
-	private static final String LOCAL_HTML_MAIN_PAGE = "test.html";
+	private static final String LOCAL_HTML_MAIN_PAGE = "display-page.html";
 	
 	private final RobotDataHandler dataHandler;
 	private ServerSocket mainServerSocket, robotDataServerSocket;
@@ -50,20 +51,25 @@ public class ServerHandler {
 				PrintWriter robotDataOutput = new PrintWriter(robotDataClientSocket.getOutputStream(), true);
 				BufferedReader robotDataInput = new BufferedReader(new InputStreamReader(robotDataClientSocket.getInputStream()));
 				
-				// Calculate and send back data
+				// Gives enough time for all the input to be sent
+				try { Thread.sleep(200);
+				} catch (Exception e) { }
+				
+				// Reads all received lines and processes them
 				writeHeader(robotDataOutput);
-				robotDataOutput.println(dataHandler.processData(robotDataInput.lines()));
+				ArrayList<String> lines = new ArrayList<String>();
+				
+				// Scans all currently 
+				while (robotDataInput.ready()) {
+					lines.add(robotDataInput.readLine());
+				}
+				robotDataOutput.println(dataHandler.responseFromRawData(lines));
 				
 				robotDataClientSocket.close();
 			}
 		} catch (SocketTimeoutException e) {
 			close();
 		}
-	}
-	
-	private void getRobotDataResponse (BufferedReader input, PrintWriter output) throws IOException {
-		writeHeader(output);
-		output.println("testing");
 	}
 	
 	// Main page socket
