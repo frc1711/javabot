@@ -1,5 +1,9 @@
+package low;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import robotstate.GameState;
 
 public class RobotDataHandler {
 	
@@ -7,7 +11,11 @@ public class RobotDataHandler {
 		ROBOT_DATA_UPDATE_INDICATOR = "ROBOT DATA UPDATE",
 		PAUSED_KEY = "PAUSED";
 	
-	private final GameState gameState = new GameState();
+	private final GameState gameState;
+	
+	public RobotDataHandler (GameState gameState) {
+		this.gameState = gameState;
+	}
 	
 	public String responseFromRawData (List<String> linesList) {
 		// Gets the actual lines of data from the entire request
