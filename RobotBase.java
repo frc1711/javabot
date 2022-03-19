@@ -1,10 +1,16 @@
+import java.util.Timer;
+import java.util.TimerTask;
+
 import low.GameWindow;
 import low.RobotState;
 import low.RobotState.GameException;
 
 public abstract class RobotBase {
 	
+	private static final int FRAME_MILLIS = 250;
+	
 	private final RobotState robotState = new RobotState();
+	private final GameWindow gameWindow = new GameWindow(robotState);
 	
 	public final void turnLeft () {
 		robotState.turnLeft();
@@ -19,23 +25,27 @@ public abstract class RobotBase {
 	}
 	
 	public final void startRobot () {
-		GameWindow gameWindow = new GameWindow(robotState);
+		// Start the game window
 		gameWindow.start();
 		
-		// TODO: Make a run loop here
-		new Thread(this::runWrapper).start();
-		for (int i = 0; i < 100; i++) {
-			System.out.println("Advancing frame");
-			gameWindow.advanceFrame();
-		}
-	}
-	
-	private final void runWrapper () {
+		// Create the scheduled update loop
+		TimerTask timerTask = new TimerTask(){
+			@Override
+			public void run () {
+				robotState.update();
+				gameWindow.displayNextFrame();
+			}
+		};
+		new Timer().scheduleAtFixedRate(timerTask, 0, FRAME_MILLIS);
+		
+		// Begin running the robot program
 		try {
 			run();
-		} catch (GameException e) {
+		} catch (Exception e) {
+			System.out.println("While running the game, an exception occurred:");
 			System.out.println(e);
 		}
+		System.out.println("Robot \"" + this.getClass().getName() + "\" has finished");
 	}
 	
 	public abstract void run () throws GameException;

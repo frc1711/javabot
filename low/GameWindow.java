@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -50,12 +51,25 @@ public class GameWindow {
 		}
 		
 		private void drawRobot (Graphics2D g) {
+			AffineTransform transform = g.getTransform();
+			
+			g.translate((int)((robotState.x + 0.5) * CELL_SIZE), (int)((robotState.y + 0.5) * CELL_SIZE));
+			g.rotate(-Math.PI / 2 * robotState.rotation);
+			
 			g.setColor(Color.BLACK);
-			g.fillRect(
-				(int)((robotState.x + 0.1) * CELL_SIZE),
-				(int)((robotState.x + 0.1) * CELL_SIZE),
-				(int)(CELL_SIZE * 0.8),
-				(int)(CELL_SIZE * 0.8));
+			g.setStroke(new BasicStroke(2));
+			g.drawPolygon(
+				new int[] {
+					(int)(-0.4 * CELL_SIZE),
+					(int)(0.4 * CELL_SIZE),
+					(int)(-0.4 * CELL_SIZE)},
+				new int[] {
+					(int)(-0.35 * CELL_SIZE),
+					0,
+					(int)(0.35 * CELL_SIZE)},
+				3);
+			
+			g.setTransform(transform);
 		}
 		
 		private void drawBackground (Graphics2D g) {
@@ -75,15 +89,13 @@ public class GameWindow {
 		}
 	}
 	
-	public void advanceFrame () {
-		robotState.update();
+	public void displayNextFrame () {
 		canvas.repaint();
 	}
 	
 	public void onClose () {
 		jFrame.setVisible(false);
 		jFrame.dispose();
-		jFrame.repaint();
 		System.exit(0);
 	}
 	
