@@ -61,6 +61,7 @@ public class GameWindow {
 			Graphics2D g = (Graphics2D)graphics;
 			drawBackground(g);
 			drawItems(g);
+			drawWalls(g);
 			drawRobot(g);
 		}
 		
@@ -108,7 +109,7 @@ public class GameWindow {
 		}
 		
 		private void drawItems (Graphics2D g) {
-			g.setColor(Color.BLACK);
+			g.setColor(Color.GRAY);
 			for (int x = 0; x < robotState.items.length; x ++) {
 				for (int y = 0; y < robotState.items[x].length; y ++) {
 					if (robotState.items[x][y]) g.fillRect(
@@ -116,6 +117,19 @@ public class GameWindow {
 						(int)((y + 0.3) * cellSize),
 						(int)(0.4 * cellSize),
 						(int)(0.4 * cellSize));
+				}
+			}
+		}
+		
+		private void drawWalls (Graphics2D g) {
+			g.setColor(Color.BLACK);
+			for (int x = 0; x < robotState.walls.length; x ++) {
+				for (int y = 0; y < robotState.walls[x].length; y ++) {
+					if (robotState.walls[x][y]) g.fillRect(
+						(int)(x * cellSize),
+						(int)(y * cellSize),
+						(int)Math.ceil(cellSize),
+						(int)Math.ceil(cellSize));
 				}
 			}
 		}

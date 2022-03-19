@@ -7,7 +7,7 @@ public class RobotExample extends RobotBase {
 		RobotExample robot = new RobotExample();
 		
 		robot.start(
-			10,
+			6,
 			new InitialGameState(
 				4, 4,
 				Direction.WEST,
@@ -17,6 +17,7 @@ public class RobotExample extends RobotBase {
 	@Override
 	public void run () {
 		tileGrid(false);
+		spinzForDayz();
 	}
 	
 	public void tileGrid (boolean startWithItem) {
@@ -35,6 +36,10 @@ public class RobotExample extends RobotBase {
 			move();
 			turnLeft();
 		}
+	}
+	
+	public void spinzForDayz () {
+		while (true) turnRight();
 	}
 	
 	public void placeItemEveryOther (boolean startWithItem) {

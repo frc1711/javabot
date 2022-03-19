@@ -10,6 +10,7 @@ public class RobotState {
 	int x, y, rotation;
 	
 	boolean[][] items;
+	boolean[][] walls;
 	
 	private final Object gameFrameWatcher = new Object();
 	
@@ -18,7 +19,9 @@ public class RobotState {
 		y = state.robotY;
 		rotation = rotationFromDirection(state.robotDirection);
 		fieldWidth = state.fieldWidth;
+		
 		items = new boolean[fieldWidth][fieldWidth];
+		walls = new boolean[fieldWidth][fieldWidth];
 	}
 	
 	public final void update () {
@@ -39,10 +42,26 @@ public class RobotState {
 		if (rotation == -1) rotation = 3;
 	}
 	
-	public final void move () throws GameException {
+	public final void move () {
 		waitForGameStateUpdate();
 		
-		final int x1 = x, y1 = y;
+		int x1 = x, y1 = y;
+		moveNoWaitOrCheck();
+		
+		// Ensures the robot is still within the game bounds
+		try {
+			checkPosition();
+		} catch (GameException e) {
+			// Return to original position
+			x = x1;
+			y = y1;
+			
+			// Throw exception
+			throw e;
+		}
+	}
+	
+	private final void moveNoWaitOrCheck () {
 		switch (rotation) {
 			case 0:
 				x ++;
@@ -57,32 +76,23 @@ public class RobotState {
 				y ++;
 				break;
 		}
-		
-		try {
-			checkWithinBounds();
-		} catch (GameException e) {
-			// Return to original position
-			x = x1;
-			y = y1;
-			
-			// Throw exception
-			throw e;
-		}
 	}
 	
 	public final boolean canMove () {
-		switch (rotation) {
-			case 0:
-				return x < fieldWidth - 1;
-			case 1:
-				return y > 0;
-			case 2:
-				return x > 0;
-			case 3:
-				return y < fieldWidth - 1;
-			default:
-				return false;
+		boolean exception = false;
+		
+		int x1 = x, y1 = y;
+		moveNoWaitOrCheck();
+		try {
+			checkPosition();
+		} catch (GameException e) {
+			exception = true;
 		}
+		
+		x = x1;
+		y = y1;
+		
+		return !exception;
 	}
 	
 	public final RobotBase.Direction getDirection () {
@@ -131,9 +141,10 @@ public class RobotState {
 		return items[x][y];
 	}
 	
-	private void checkWithinBounds () throws GameException {
-		if (x < 0 || x >= fieldWidth) throw new GameException("Out of bounds");
-		if (y < 0 || y >= fieldWidth) throw new GameException("Out of bounds");
+	private void checkPosition () throws GameException {
+		if (x < 0 || x >= fieldWidth) throw new GameException("Attempted to move out of bounds");
+		if (y < 0 || y >= fieldWidth) throw new GameException("Attempted to move out of bounds");
+		if (walls[x][y] == true) throw new GameException("Hit a wall");
 	}
 	
 	private void waitForGameStateUpdate () {
