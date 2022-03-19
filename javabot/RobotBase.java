@@ -16,6 +16,11 @@ public abstract class RobotBase {
 	
 	public enum Direction {
 		NORTH, SOUTH, EAST, WEST;
+		public static Direction parseDirection (String str) {
+			for (Direction direction : Direction.values()) {
+				if (str.equals(direction.name())) return direction;
+			} return null;
+		}
 	}
 	
 	private boolean hasStarted = false;

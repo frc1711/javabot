@@ -5,13 +5,7 @@ public class RobotExample extends RobotBase {
 	
 	public static void main (String[] args) {
 		RobotExample robot = new RobotExample();
-		
-		robot.start(
-			6,
-			new InitialGameState(
-				4, 4,
-				Direction.WEST,
-				9));
+		robot.start(6, new InitialGameState("sample-game-state.txt"));
 	}
 	
 	@Override

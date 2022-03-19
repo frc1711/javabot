@@ -2,6 +2,7 @@ package javabot.low;
 
 import javabot.InitialGameState;
 import javabot.RobotBase;
+import javabot.InitialGameState.Position;
 import javabot.RobotBase.Direction;
 
 public class RobotState {
@@ -22,6 +23,8 @@ public class RobotState {
 		
 		items = new boolean[fieldWidth][fieldWidth];
 		walls = new boolean[fieldWidth][fieldWidth];
+		for (Position item : state.items) items[item.x][item.y] = true;
+		for (Position wall : state.walls) walls[wall.x][wall.y] = true;
 	}
 	
 	public final void update () {
