@@ -9,6 +9,8 @@ public class RobotState {
 	final int fieldWidth;
 	int x, y, rotation;
 	
+	boolean[][] items;
+	
 	private final Object gameFrameWatcher = new Object();
 	
 	public RobotState (InitialGameState state) {
@@ -16,6 +18,7 @@ public class RobotState {
 		y = state.robotY;
 		rotation = rotationFromDirection(state.robotDirection);
 		fieldWidth = state.fieldWidth;
+		items = new boolean[fieldWidth][fieldWidth];
 	}
 	
 	public final void update () {
@@ -110,6 +113,22 @@ public class RobotState {
 			default:
 				return -1;
 		}
+	}
+	
+	public final void putItem () {
+		waitForGameStateUpdate();
+		if (items[x][y]) throw new GameException("Cannot add a second item to a cell");
+		items[x][y] = true;
+	}
+	
+	public final void pickItem () {
+		waitForGameStateUpdate();
+		if (!items[x][y]) throw new GameException("Cannot pick up a nonexistent item");
+		items[x][y] = false;
+	}
+	
+	public final boolean checkForItem () {
+		return items[x][y];
 	}
 	
 	private void checkWithinBounds () throws GameException {

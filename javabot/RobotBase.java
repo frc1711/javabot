@@ -45,6 +45,21 @@ public abstract class RobotBase {
 		return robotState.getDirection();
 	}
 	
+	public final void putItem () {
+		assertHasStarted(true);
+		robotState.putItem();
+	}
+	
+	public final void pickItem () {
+		assertHasStarted(true);
+		robotState.pickItem();
+	}
+	
+	public final boolean checkForItem () {
+		assertHasStarted(true);
+		return robotState.checkForItem();
+	}
+	
 	public final void start (InitialGameState gameState) {
 		assertHasStarted(false);
 		hasStarted = true;

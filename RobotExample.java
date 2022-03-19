@@ -14,7 +14,34 @@ public class RobotExample extends RobotBase {
 	
 	@Override
 	public void run () {
-		goToCoordinates(3, 3);
+		tileGrid(false);
+	}
+	
+	public void tileGrid (boolean startWithItem) {
+		goToCoordinates(0, 0);
+		
+		while (true) {
+			placeItemEveryOther(startWithItem);
+			turnRight();
+			if (!canMove()) break;
+			move();
+			turnRight();
+			
+			placeItemEveryOther(!startWithItem);
+			turnLeft();
+			if (!canMove()) break;
+			move();
+			turnLeft();
+		}
+	}
+	
+	public void placeItemEveryOther (boolean startWithItem) {
+		boolean placeItem = startWithItem;
+		while (canMove()) {
+			if (placeItem) putItem();
+			placeItem = !placeItem;
+			move();
+		} if (placeItem) putItem();
 	}
 	
 	public void goToCoordinates (int x, int y) {

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
@@ -50,6 +51,7 @@ public class GameWindow {
 		public void paintComponent (Graphics graphics) {
 			Graphics2D g = (Graphics2D)graphics;
 			drawBackground(g);
+			drawItems(g);
 			drawRobot(g);
 		}
 		
@@ -59,9 +61,7 @@ public class GameWindow {
 			g.translate((int)((robotState.x + 0.5) * cellSize), (int)((robotState.y + 0.5) * cellSize));
 			g.rotate(-Math.PI / 2 * robotState.rotation);
 			
-			g.setColor(Color.BLACK);
-			g.setStroke(new BasicStroke(2));
-			g.drawPolygon(
+			Polygon playerPolygon = new Polygon(
 				new int[] {
 					(int)(-0.4 * cellSize),
 					(int)(0.4 * cellSize),
@@ -71,6 +71,13 @@ public class GameWindow {
 					0,
 					(int)(0.35 * cellSize)},
 				3);
+			
+			g.setColor(Color.WHITE);
+			g.fillPolygon(playerPolygon);
+			
+			g.setColor(Color.BLACK);
+			g.setStroke(new BasicStroke(2));
+			g.drawPolygon(playerPolygon);
 			
 			g.setTransform(transform);
 		}
@@ -89,6 +96,19 @@ public class GameWindow {
 			
 			for (int col = 1; col < numCells; col ++)
 				g.drawLine((int)(col*cellSize), 0, (int)(col*cellSize), (int)SIZE);
+		}
+		
+		private void drawItems (Graphics2D g) {
+			g.setColor(Color.BLACK);
+			for (int x = 0; x < robotState.items.length; x ++) {
+				for (int y = 0; y < robotState.items[x].length; y ++) {
+					if (robotState.items[x][y]) g.fillRect(
+						(int)((x + 0.3) * cellSize),
+						(int)((y + 0.3) * cellSize),
+						(int)(0.4 * cellSize),
+						(int)(0.4 * cellSize));
+				}
+			}
 		}
 	}
 	
