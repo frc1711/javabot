@@ -9,10 +9,10 @@ import javabot.low.RobotState.GameException;
 
 public abstract class RobotBase {
 	
-	private static final int FRAME_MILLIS = 250;
-	
 	private RobotState robotState;
 	private GameWindow gameWindow;
+	
+	private boolean isPaused, doFrameStep;
 	
 	public enum Direction {
 		NORTH, SOUTH, EAST, WEST;
@@ -60,23 +60,28 @@ public abstract class RobotBase {
 		return robotState.checkForItem();
 	}
 	
-	public final void start (InitialGameState gameState) {
+	public final void start (double fps, InitialGameState gameState) {
 		assertHasStarted(false);
 		hasStarted = true;
 		
 		robotState = new RobotState(gameState);
-		gameWindow = new GameWindow(robotState);
+		gameWindow = new GameWindow(robotState, this::pauseToggle, this::frameStep);
 		gameWindow.start();
 		
 		// Create the scheduled update loop
 		TimerTask timerTask = new TimerTask(){
 			@Override
 			public void run () {
-				robotState.update();
-				gameWindow.displayNextFrame();
+				if (doFrameStep || !isPaused) {
+					doFrameStep = false;
+					robotState.update();
+					gameWindow.displayNextFrame();
+				}
 			}
 		};
-		new Timer().scheduleAtFixedRate(timerTask, FRAME_MILLIS, FRAME_MILLIS);
+		
+		int frameMillis = (int)(1000 / fps);
+		new Timer().scheduleAtFixedRate(timerTask, frameMillis, frameMillis);
 		
 		// Begin running the robot program
 		try {
@@ -87,6 +92,15 @@ public abstract class RobotBase {
 			System.out.println("While the robot was running, an exception occurred:");
 			e.printStackTrace();
 		}
+	}
+	
+	private void pauseToggle () {
+		isPaused = !isPaused;
+	}
+	
+	private void frameStep () {
+		if (!isPaused) pauseToggle();
+		else doFrameStep = true;
 	}
 	
 	private void assertHasStarted (boolean started) {

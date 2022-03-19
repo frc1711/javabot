@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
@@ -25,13 +27,20 @@ public class GameWindow {
 	
 	private final RobotState robotState;
 	
-	public GameWindow (RobotState robotState) {
+	public GameWindow (RobotState robotState, Runnable onMouseLeftClick, Runnable onMouseRightClick) {
 		numCells = robotState.fieldWidth;
 		cellSize = SIZE / numCells;
 		
 		this.robotState = robotState;
 		
 		canvas.setPreferredSize(new Dimension((int)SIZE, (int)SIZE));
+		canvas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked (MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) onMouseLeftClick.run();
+				if (e.getButton() == MouseEvent.BUTTON3) onMouseRightClick.run();
+			}
+		});
 		
 		jFrame.setTitle("Javabot");
 		jFrame.setSize((int)SIZE, (int)SIZE);
