@@ -6,13 +6,15 @@ public class RobotState {
 		FIELD_WIDTH = 10,
 		FIELD_HEIGHT = 10;
 	
-	private int
+	int
 		x = 0, y = 0,
 		rotation = 0; // 0 = facing right, 1 = up, 2 = left, 3 = down
 	
+	private final Object gameFrameWatcher = new Object();
+	
 	public final void update () {
-		synchronized (this) {
-			this.notify();
+		synchronized (gameFrameWatcher) {
+			gameFrameWatcher.notify();
 		}
 	}
 	
@@ -65,29 +67,10 @@ public class RobotState {
 	}
 	
 	private void waitForGameStateUpdate () {
-		synchronized (this) {
-			try { this.wait(); }
+		synchronized (gameFrameWatcher) {
+			try { gameFrameWatcher.wait(); }
 			catch (InterruptedException e) { }
 		}
-	}
-	
-	public final void startRobot (Runnable robotRunFunction) {
-		// Makes the server and prepares the robot thread
-		ServerHandler server = new ServerHandler(new RobotDataHandler(this));
-		Thread robotThread = new Thread(robotRunFunction);
-		robotThread.setDaemon(true);
-		
-		// Starts the robot thread and starts the server
-		robotThread.start();
-		server.start();
-	}
-	
-	public final String getDataString () {
-		JSON obj = new JSON();
-		obj.put("x", x);
-		obj.put("y", y);
-		obj.put("rotation", rotation);
-		return obj.getJSONString();
 	}
 	
 	public class GameException extends RuntimeException {

@@ -1,39 +1,40 @@
-import java.io.PrintStream;
-
+import low.GameWindow;
 import low.RobotState;
 import low.RobotState.GameException;
 
 public abstract class RobotBase {
 	
-	public final PrintStream output;
-	private final RobotState robot;
-	
-	public RobotBase () {
-		output = null; // TODO: Make the PrintStream usable
-		robot = new RobotState();
-	}
+	private final RobotState robotState = new RobotState();
 	
 	public final void turnLeft () {
-		robot.turnLeft();
+		robotState.turnLeft();
 	}
 	
 	public final void turnRight () {
-		robot.turnRight();
+		robotState.turnRight();
 	}
 	
 	public final void move () {
-		robot.move();
+		robotState.move();
 	}
 	
 	public final void startRobot () {
-		robot.startRobot(this::runWrapper);
+		GameWindow gameWindow = new GameWindow(robotState);
+		gameWindow.start();
+		
+		// TODO: Make a run loop here
+		new Thread(this::runWrapper).start();
+		for (int i = 0; i < 100; i++) {
+			System.out.println("Advancing frame");
+			gameWindow.advanceFrame();
+		}
 	}
 	
 	private final void runWrapper () {
 		try {
 			run();
 		} catch (GameException e) {
-			output.println(e);
+			System.out.println(e);
 		}
 	}
 	

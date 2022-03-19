@@ -21,7 +21,11 @@ public class GameWindow {
 	private final JFrame jFrame = new JFrame();
 	private final GameCanvas canvas = new GameCanvas();
 	
-	public GameWindow () {
+	private final RobotState robotState;
+	
+	public GameWindow (RobotState robotState) {
+		this.robotState = robotState;
+		
 		canvas.setPreferredSize(new Dimension((int)SIZE, (int)SIZE));
 		
 		jFrame.setTitle("Javabot");
@@ -32,6 +36,7 @@ public class GameWindow {
 		jFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing (WindowEvent e) { onClose(); }
 		});
+		
 		jFrame.add(canvas);
 		jFrame.pack();
 	}
@@ -46,7 +51,11 @@ public class GameWindow {
 		
 		private void drawRobot (Graphics2D g) {
 			g.setColor(Color.BLACK);
-			g.fillRect(10, 10, 40, 40);
+			g.fillRect(
+				(int)((robotState.x + 0.1) * CELL_SIZE),
+				(int)((robotState.x + 0.1) * CELL_SIZE),
+				(int)(CELL_SIZE * 0.8),
+				(int)(CELL_SIZE * 0.8));
 		}
 		
 		private void drawBackground (Graphics2D g) {
@@ -66,6 +75,11 @@ public class GameWindow {
 		}
 	}
 	
+	public void advanceFrame () {
+		robotState.update();
+		canvas.repaint();
+	}
+	
 	public void onClose () {
 		jFrame.setVisible(false);
 		jFrame.dispose();
@@ -76,11 +90,6 @@ public class GameWindow {
 	public void start () {
 		jFrame.setVisible(true);
 		canvas.setVisible(true);
-	}
-	
-	public static void main (String[] args) {
-		GameWindow window = new GameWindow();
-		window.start();
 	}
 	
 }
