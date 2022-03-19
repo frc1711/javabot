@@ -5,7 +5,6 @@ import java.util.TimerTask;
 
 import javabot.low.GameWindow;
 import javabot.low.RobotState;
-import javabot.low.RobotState.GameException;
 
 public abstract class RobotBase {
 	
@@ -113,6 +112,6 @@ public abstract class RobotBase {
 		if (!hasStarted && started) throw new RuntimeException("Robot has not yet been started");
 	}
 	
-	public abstract void run () throws GameException;
+	public abstract void run ();
 	
 }
