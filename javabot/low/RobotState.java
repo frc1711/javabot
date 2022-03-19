@@ -1,4 +1,7 @@
-package low;
+package javabot.low;
+
+import javabot.RobotBase;
+import javabot.RobotBase.Direction;
 
 public class RobotState {
 	
@@ -7,8 +10,8 @@ public class RobotState {
 		FIELD_HEIGHT = 10;
 	
 	int
-		x = 0, y = 0,
-		rotation = 0; // 0 = facing right, 1 = up, 2 = left, 3 = down
+		x = 5, y = 5,
+		rotation = 2; // 0 = facing east, 1 = north, 2 = west, 3 = south
 	
 	private final Object gameFrameWatcher = new Object();
 	
@@ -58,6 +61,36 @@ public class RobotState {
 			
 			// Throw exception
 			throw e;
+		}
+	}
+	
+	public final boolean canMove () {
+		switch (rotation) {
+			case 0:
+				return x < FIELD_WIDTH - 1;
+			case 1:
+				return y > 0;
+			case 2:
+				return x > 0;
+			case 3:
+				return y < FIELD_HEIGHT - 1;
+			default:
+				return false;
+		}
+	}
+	
+	public final RobotBase.Direction getDirection () {
+		switch (rotation) {
+			case 0:
+				return Direction.EAST;
+			case 1:
+				return Direction.NORTH;
+			case 2:
+				return Direction.WEST;
+			case 3:
+				return Direction.SOUTH;
+			default:
+				return null;
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package low;
+package javabot.low;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
