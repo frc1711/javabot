@@ -5,30 +5,71 @@
 	
 	<script>
 		const width = window.innerWidth, height = window.innerHeight;
+		const viewWidth = Math.min(width, height)
+		
+		const numRows = 10, numCols = 10
+		const rowHeight = viewWidth / numRows, colWidth = viewWidth / numCols
 		
 		const canvas = document.createElement("canvas")
-		canvas.setAttribute("position", "absolute")
+		canvas.setAttribute("position", "fixed")
 		canvas.setAttribute("left", "0px")
 		canvas.setAttribute("top", "0px")
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
+		document.body.setAttribute("style", "margin: 0px; padding: 0px;")
 		document.body.appendChild(canvas)
 		
 		let gameState = {}
 		
 		function clearBackground () {
-			ctx.fillStyle = "white";
+			ctx.fillStyle = "white"
 			ctx.fillRect(0, 0, width, height)
 		}
 		
-		function drawRect (x, y, w, h) {
-			ctx.fillStyle = "black"
+		function drawLine (x1, y1, x2, y2, w) {
+			ctx.lineWidth = w
+			ctx.strokeStyle = "black"
+			ctx.beginPath()
+			ctx.moveTo(x1, y1)
+			ctx.lineTo(x2, y2)
+			ctx.stroke()
+		}
+		
+		function drawRect (x, y, w, h, c) {
+			ctx.fillStyle = c
 			ctx.fillRect(x, y, w, h)
 		}
 		
-		function updateView (response) {
+		function drawBackground () {
 			clearBackground()
-			console.log(gameState)
+			for (let row = 0; row <= numRows; row ++)
+				drawLine(0, row*rowHeight, viewWidth, row*rowHeight, 3)
+			for (let col = 0; col <= numCols; col ++)
+				drawLine(col*colWidth, 0, col*colWidth, viewWidth, 3)
+		}
+		
+		function drawRobot () {
+			ctx.translate(colWidth * (gameState.x + 0.5), rowHeight * (gameState.y + 0.5))
+			ctx.rotate((-Math.PI/2) * gameState.rotation)
+			drawRect(
+				-colWidth * 0.4,
+				-rowHeight * 0.4,
+				colWidth * 0.8,
+				rowHeight * 0.8,
+				"black")
+			drawRect(
+				colWidth * 0.25,
+				-rowHeight * 0.2,
+				colWidth * 0.1,
+				rowHeight * 0.4,
+				"white")
+			ctx.rotate((Math.PI/2) * gameState.rotation)
+			ctx.translate(-colWidth * (gameState.x + 0.5), -rowHeight * (gameState.y + 0.5))
+		}
+		
+		function updateView (response) {
+			drawBackground()
+			drawRobot()
 		}
 		
 		const ctx = canvas.getContext("2d")

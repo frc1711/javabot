@@ -6,8 +6,9 @@ public class RobotState {
 		FIELD_WIDTH = 10,
 		FIELD_HEIGHT = 10;
 	
-	private double x = 0, y = 0;
-	private int rotation = 0; // 0 = facing right, 1 = up, 2 = left, 3 = down
+	private int
+		x = 0, y = 0,
+		rotation = 0; // 0 = facing right, 1 = up, 2 = left, 3 = down
 	
 	public final void update () {
 		synchronized (this) {
@@ -29,22 +30,33 @@ public class RobotState {
 	
 	public final void move () throws GameException {
 		waitForGameStateUpdate();
+		
+		final int x1 = x, y1 = y;
 		switch (rotation) {
 			case 0:
 				x ++;
 				break;
 			case 1:
-				y ++;
+				y --;
 				break;
 			case 2:
 				x --;
 				break;
 			case 3:
-				y --;
+				y ++;
 				break;
 		}
 		
-		checkWithinBounds();
+		try {
+			checkWithinBounds();
+		} catch (GameException e) {
+			// Return to original position
+			x = x1;
+			y = y1;
+			
+			// Throw exception
+			throw e;
+		}
 	}
 	
 	private void checkWithinBounds () throws GameException {
