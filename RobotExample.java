@@ -4,15 +4,12 @@ import javabot.RobotBase;
 public class RobotExample extends RobotBase {
 	
 	public static void main (String[] args) {
-		new RobotExample(
-			new InitialGameState(
-				4, 4,
-				Direction.WEST,
-				9)).startRobot();
-	}
-	
-	public RobotExample (InitialGameState s) {
-		super(s);
+		RobotExample robot = new RobotExample();
+		
+		robot.start(new InitialGameState(
+			4, 4,
+			Direction.WEST,
+			9));
 	}
 	
 	@Override

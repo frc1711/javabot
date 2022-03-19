@@ -11,40 +11,46 @@ public abstract class RobotBase {
 	
 	private static final int FRAME_MILLIS = 250;
 	
-	private final RobotState robotState;
-	private final GameWindow gameWindow;
+	private RobotState robotState;
+	private GameWindow gameWindow;
 	
 	public enum Direction {
 		NORTH, SOUTH, EAST, WEST;
 	}
 	
-	public RobotBase (InitialGameState initialGameState) {
-		robotState = new RobotState(initialGameState);
-		gameWindow = new GameWindow(robotState);
-	}
+	private boolean hasStarted = false;
 	
 	public final void turnLeft () {
+		assertHasStarted(true);
 		robotState.turnLeft();
 	}
 	
 	public final void turnRight () {
+		assertHasStarted(true);
 		robotState.turnRight();
 	}
 	
 	public final void move () {
+		assertHasStarted(true);
 		robotState.move();
 	}
 	
 	public final boolean canMove () {
+		assertHasStarted(true);
 		return robotState.canMove();
 	}
 	
 	public final Direction getDirection () {
+		assertHasStarted(true);
 		return robotState.getDirection();
 	}
 	
-	public final void startRobot () {
-		// Start the game window
+	public final void start (InitialGameState gameState) {
+		assertHasStarted(false);
+		hasStarted = true;
+		
+		robotState = new RobotState(gameState);
+		gameWindow = new GameWindow(robotState);
 		gameWindow.start();
 		
 		// Create the scheduled update loop
@@ -61,11 +67,16 @@ public abstract class RobotBase {
 		try {
 			gameWindow.displayNextFrame();
 			run();
+			System.out.println("Robot \"" + this.getClass().getName() + "\" has finished");
 		} catch (Exception e) {
-			System.out.println("While running the game, an exception occurred:");
-			System.out.println(e);
+			System.out.println("While the robot was running, an exception occurred:");
+			e.printStackTrace();
 		}
-		System.out.println("Robot \"" + this.getClass().getName() + "\" has finished");
+	}
+	
+	private void assertHasStarted (boolean started) {
+		if (hasStarted && !started) throw new RuntimeException("Robot has already been started");
+		if (!hasStarted && started) throw new RuntimeException("Robot has not yet been started");
 	}
 	
 	public abstract void run () throws GameException;
