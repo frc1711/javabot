@@ -1,19 +1,22 @@
 package javabot.low;
 
+import javabot.InitialGameState;
 import javabot.RobotBase;
 import javabot.RobotBase.Direction;
 
 public class RobotState {
 	
-	private static final int
-		FIELD_WIDTH = 10,
-		FIELD_HEIGHT = 10;
-	
-	int
-		x = 5, y = 5,
-		rotation = 2; // 0 = facing east, 1 = north, 2 = west, 3 = south
+	final int fieldWidth;
+	int x, y, rotation;
 	
 	private final Object gameFrameWatcher = new Object();
+	
+	public RobotState (InitialGameState state) {
+		x = state.robotX;
+		y = state.robotY;
+		rotation = rotationFromDirection(state.robotDirection);
+		fieldWidth = state.fieldWidth;
+	}
 	
 	public final void update () {
 		synchronized (gameFrameWatcher) {
@@ -67,13 +70,13 @@ public class RobotState {
 	public final boolean canMove () {
 		switch (rotation) {
 			case 0:
-				return x < FIELD_WIDTH - 1;
+				return x < fieldWidth - 1;
 			case 1:
 				return y > 0;
 			case 2:
 				return x > 0;
 			case 3:
-				return y < FIELD_HEIGHT - 1;
+				return y < fieldWidth - 1;
 			default:
 				return false;
 		}
@@ -94,9 +97,24 @@ public class RobotState {
 		}
 	}
 	
+	private final int rotationFromDirection (Direction direction) {
+		switch (direction) {
+			case EAST:
+				return 0;
+			case NORTH:
+				return 1;
+			case WEST:
+				return 2;
+			case SOUTH:
+				return 3;
+			default:
+				return -1;
+		}
+	}
+	
 	private void checkWithinBounds () throws GameException {
-		if (x < 0 || x >= FIELD_WIDTH) throw new GameException("Out of bounds");
-		if (y < 0 || y >= FIELD_HEIGHT) throw new GameException("Out of bounds");
+		if (x < 0 || x >= fieldWidth) throw new GameException("Out of bounds");
+		if (y < 0 || y >= fieldWidth) throw new GameException("Out of bounds");
 	}
 	
 	private void waitForGameStateUpdate () {

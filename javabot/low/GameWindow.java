@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 public class GameWindow {
 	
 	public static final double SIZE = 600;
-	public static final int NUM_CELLS = 10;
+	public final int numCells;
 	
-	private static final double CELL_SIZE = SIZE / NUM_CELLS;
+	private final double cellSize;
 	
 	private final JFrame jFrame = new JFrame();
 	private final GameCanvas canvas = new GameCanvas();
@@ -25,6 +25,9 @@ public class GameWindow {
 	private final RobotState robotState;
 	
 	public GameWindow (RobotState robotState) {
+		numCells = robotState.fieldWidth;
+		cellSize = SIZE / numCells;
+		
 		this.robotState = robotState;
 		
 		canvas.setPreferredSize(new Dimension((int)SIZE, (int)SIZE));
@@ -53,20 +56,20 @@ public class GameWindow {
 		private void drawRobot (Graphics2D g) {
 			AffineTransform transform = g.getTransform();
 			
-			g.translate((int)((robotState.x + 0.5) * CELL_SIZE), (int)((robotState.y + 0.5) * CELL_SIZE));
+			g.translate((int)((robotState.x + 0.5) * cellSize), (int)((robotState.y + 0.5) * cellSize));
 			g.rotate(-Math.PI / 2 * robotState.rotation);
 			
 			g.setColor(Color.BLACK);
 			g.setStroke(new BasicStroke(2));
 			g.drawPolygon(
 				new int[] {
-					(int)(-0.4 * CELL_SIZE),
-					(int)(0.4 * CELL_SIZE),
-					(int)(-0.4 * CELL_SIZE)},
+					(int)(-0.4 * cellSize),
+					(int)(0.4 * cellSize),
+					(int)(-0.4 * cellSize)},
 				new int[] {
-					(int)(-0.35 * CELL_SIZE),
+					(int)(-0.35 * cellSize),
 					0,
-					(int)(0.35 * CELL_SIZE)},
+					(int)(0.35 * cellSize)},
 				3);
 			
 			g.setTransform(transform);
@@ -81,11 +84,11 @@ public class GameWindow {
 			g.setColor(Color.BLACK);
 			g.setStroke(new BasicStroke(1));
 			
-			for (int row = 1; row < NUM_CELLS; row ++)
-				g.drawLine(0, (int)(row*CELL_SIZE), (int)SIZE, (int)(row*CELL_SIZE));
+			for (int row = 1; row < numCells; row ++)
+				g.drawLine(0, (int)(row*cellSize), (int)SIZE, (int)(row*cellSize));
 			
-			for (int col = 1; col < NUM_CELLS; col ++)
-				g.drawLine((int)(col*CELL_SIZE), 0, (int)(col*CELL_SIZE), (int)SIZE);
+			for (int col = 1; col < numCells; col ++)
+				g.drawLine((int)(col*cellSize), 0, (int)(col*cellSize), (int)SIZE);
 		}
 	}
 	

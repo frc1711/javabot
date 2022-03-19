@@ -11,11 +11,16 @@ public abstract class RobotBase {
 	
 	private static final int FRAME_MILLIS = 250;
 	
-	private final RobotState robotState = new RobotState();
-	private final GameWindow gameWindow = new GameWindow(robotState);
+	private final RobotState robotState;
+	private final GameWindow gameWindow;
 	
 	public enum Direction {
 		NORTH, SOUTH, EAST, WEST;
+	}
+	
+	public RobotBase (InitialGameState initialGameState) {
+		robotState = new RobotState(initialGameState);
+		gameWindow = new GameWindow(robotState);
 	}
 	
 	public final void turnLeft () {
